@@ -8,48 +8,44 @@ manual_seed: 10
 # dataset and data loader settings
 datasets:
   train:
-    name: REDS
-    type: REDSRecurrentDataset
-    dataroot_gt: /data/gy/vox-unalign/GT
-    dataroot_lq: /data/gy/vox-unalign/LR
-    meta_info_file: basicsr/data/meta_info/meta_info_REDS_GT.txt
-    val_partition: REDS4  # set to 'official' when use the official validation partition
+    name: VOX
+    type: Vimeo90KDataset
+    dataroot_gt: /data2/wei/vox-unalign/GT
+    dataroot_lq: /data2/wei/vox-unalign/LR
+    meta_info_file: basicsr/data/meta_info/unalign_vox_train.txt
+    val_partition: Vimeo90KDateset  # set to 'official' when use the official validation partition
     io_backend:
       type: disk
 
     is_train: true
-    num_frame: 15
-    gt_size: 256
+    num_frame: 7
+    gt_size: 96
     interval_list: [1]
     random_reverse: false
     use_flip: true
-    use_rot: true
+    use_rot: false
 
     # data loader
     use_shuffle: true
     num_worker_per_gpu: 6
     batch_size_per_gpu: 4
-    dataset_enlarge_ratio: 200
+    dataset_enlarge_ratio: 1
     prefetch_mode: ~
-    pin_memory: true
+    # pin_memory: true
 
   val:
-    name: REDS4
-    type: REDSRecurrentDataset
-    dataroot_gt: /root/proj/Datasets/REDS/sharp_data/train_sharp    #val_sharp
-    dataroot_lq: /root/proj/Datasets/REDS/bicubic_data/train_sharp_bicubic/X4    #val_sharp_bicubic/X4
-    meta_info_file: basicsr/data/meta_info/meta_info_REDS_GT.txt
-    val_partition: REDS4  # set to 'official' when use the official validation partition
+    name: VOX
+    type: VideoTestVimeo90KDataset
+    dataroot_gt: /data2/wei/vox-unalign/GT
+    dataroot_lq: /data2/wei/vox-unalign/LR
+    meta_info_file: basicsr/data/meta_info/unalign_vox_test.txt
+    # val_partition: REDS4  # set to 'official' when use the official validation partition
     io_backend:
       type: disk
 
-    is_train: false
-    num_frame: 100
-    gt_size: ~
-    interval_list: [1]
-    random_reverse: false
-    use_flip: false
-    use_rot: false
+    cache_data: false
+    num_frame: 7
+    padding: reflection_circle
 
 
 # network structures
@@ -94,7 +90,7 @@ train:
 
 # validation settings
 val:
-  val_freq: !!float 5e3
+  val_freq: !!float 4e4
   save_img: true
 
   metrics:
@@ -106,7 +102,7 @@ val:
 # logging settings
 logger:
   print_freq: 100
-  save_checkpoint_freq: !!float 5e3
+  save_checkpoint_freq: !!float 4e4
   use_tb_logger: true
   wandb:
     project: ~

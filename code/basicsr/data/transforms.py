@@ -1,6 +1,7 @@
 import cv2
 import random
-
+import mmcv
+import torch
 
 def mod_crop(img, scale):
     """Mod crop images, used during testing.
@@ -170,3 +171,29 @@ def img_rotate(img, angle, center=None, scale=1.0):
     matrix = cv2.getRotationMatrix2D(center, angle, scale)
     rotated_img = cv2.warpAffine(img, matrix, (w, h))
     return rotated_img
+
+def totensor(imgs, bgr2rgb=True, float32=True):
+    """Numpy array to tensor.
+
+    Args:
+        imgs (list[ndarray] | ndarray): Input images.
+        bgr2rgb (bool): Whether to change bgr to rgb.
+        float32 (bool): Whether to change to float32.
+
+    Returns:
+        list[tensor] | tensor: Tensor images. If returned results only have
+            one element, just return tensor.
+    """
+
+    def _totensor(img, bgr2rgb, float32):
+        if img.shape[2] == 3 and bgr2rgb:
+            img = mmcv.bgr2rgb(img)
+        img = torch.from_numpy(img.transpose(2, 0, 1))
+        if float32:
+            img = img.float()
+        return img
+
+    if isinstance(imgs, list):
+        return [_totensor(img, bgr2rgb, float32) for img in imgs]
+    else:
+        return _totensor(imgs, bgr2rgb, float32)

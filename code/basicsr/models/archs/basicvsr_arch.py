@@ -71,9 +71,9 @@ class BasicVSR(nn.Module):
     def forward(self, lrs):
         n, t, c, h, w = lrs.size()
     
-        assert h >= 64 and w >= 64, (
-            'The height and width of input should be at least 64, '
-            f'but got {h} and {w}.')
+        # assert h >= 64 and w >= 64, (
+        #     'The height and width of input should be at least 64, '
+        #     f'but got {h} and {w}.')
         
         forward_flow, backward_flow = self.comp_flow(lrs)
 
